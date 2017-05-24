@@ -60,6 +60,8 @@ function TransformTool(container){
 	this.fillStyle = "#FFF";
 	this.strokeStyle = "#08F";
 	this.lineWidth = 2;
+
+	this.easyRegistration = false;
 }
 
 TransformTool.prototype.setTarget = function(target){
@@ -138,7 +140,7 @@ TransformTool.prototype.start = function(x, y, control){
 	}
 	
 	// commits and gives default state
-	this.end();
+	this.commit();
 	
 	this.control = control || this.getControlAt(x, y);
 	if (this.control){
@@ -179,6 +181,10 @@ TransformTool.prototype.move = function(x, y){
 };
 
 TransformTool.prototype.end = function(){
+	if(this.easyRegistration){
+		this.regStartU = this.regEndU = .5;
+		this.regStartV  = this.regEndV = .5;
+	}
 	this.commit();
 	this.control = null;
 };
@@ -212,6 +218,18 @@ TransformTool.prototype.applyControl = function(){
 		var y = 0;
 		var w = this.target.width;
 		var h = this.target.height;
+
+		// place the registration point on the opposing side, this helps scaling when trying to fit an area
+		if(this.easyRegistration &&
+				( this.control.type == Control.SCALE ||
+				this.control.type == Control.SCALE_X ||
+				this.control.type == Control.SCALE_Y )
+			){
+
+			this.regStartU = this.regEndU = Math.abs(this.control.u -1);
+			this.regStartV  = this.regEndV = Math.abs(this.control.v -1);	
+			this.updateRegistration();
+		}
 		
 		// difference between registration and control points
 		var cu = this.control.u - this.regStartU;
