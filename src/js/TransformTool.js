@@ -874,6 +874,18 @@ Matrix.prototype.invert = function() {
 	}
 };
 
+Matrix.fromValues = function(scaleX, scaleY, rotation, x, y){
+	var a = Math.cos(rotation) * scaleX;
+	var b = Math.sin(rotation) * -scaleX;
+	var c = Math.sin(rotation) * scaleY;
+	var d = Math.cos(rotation) * scaleY;
+	return new Matrix(a,b,c,d,x,y);
+}
+
+Matrix.prototype.getRotation = function(){
+	return Math.atan2(-this.b, this.a);
+};
+
 Matrix.prototype.getRotationX = function(){
 	return Math.atan2(this.b, this.a);
 };
@@ -889,6 +901,16 @@ Matrix.prototype.getTransformedX = function(x, y){
 Matrix.prototype.getTransformedY = function(x, y){
 	return this.y + this.d * y + this.b * x;
 };
+
+Matrix.prototype.getScaleX = function(){
+	var rads = this.getRotation();
+	return this.a/Math.cos(rads);
+}
+
+Matrix.prototype.getScaleY = function(){
+	var rads = this.getRotation();
+	return this.d/Math.cos(rads);
+}
 
 Matrix.prototype.scale = function(x, y) {
 	this.a *= x;
