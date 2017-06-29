@@ -408,6 +408,25 @@ TransformTool.prototype.applyRegistrationOffset = function(){
 		// delta tansform by start matrix
 		var rx = this.startMatrix.a * x + this.startMatrix.c * y;
 		var ry = this.startMatrix.d * y + this.startMatrix.b * x;
+
+		if(this.easyRegistration){
+			var scaleX = this.endMatrix.getScaleX();
+			var scaleY = this.endMatrix.getScaleY();
+
+			var tx = this.endMatrix.x;
+			var ty = this.endMatrix.y;
+			var mx = Math.abs(scaleX) < 1?  1/scaleX: 1;
+			var my = Math.abs(scaleY) < 1?  1/scaleY: 1;
+			this.endMatrix.scale(mx, my);
+
+			/*var signX = Math.sign(scaleX);
+			var signY = Math.sign(scaleY);
+			this.endMatrix.scale(signX, signY);*/
+
+			this.endMatrix.x = tx;
+			this.endMatrix.y = ty;
+
+		}
 		// subtract delta transform end matrix
 		rx -= this.endMatrix.a * x + this.endMatrix.c * y;
 		ry -= this.endMatrix.d * y + this.endMatrix.b * x;
