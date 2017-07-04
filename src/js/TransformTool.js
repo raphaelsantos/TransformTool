@@ -62,6 +62,7 @@ function TransformTool(container){
 	this.lineWidth = 2;
 
 	this.easyRegistration = false;
+	this.minScale = 0;
 }
 
 TransformTool.prototype.setTarget = function(target){
@@ -356,6 +357,15 @@ TransformTool.prototype.applyControl = function(){
 				break;
 			}
 		}
+
+		if(this.easyRegistration)
+		{
+			var scaleX = this.preMatrix.getScaleX() * this.startMatrix.getScaleX();
+			var scaleY = this.preMatrix.getScaleY() * this.startMatrix.getScaleY();
+			var mx = Math.abs(scaleX) < this.minScale?  this.minScale/scaleX: 1;
+			var my = Math.abs(scaleY) < this.minScale?  this.minScale/scaleY: 1;
+			this.preMatrix.scale(mx, my);
+		}
 	}
 };
 
@@ -417,11 +427,6 @@ TransformTool.prototype.applyRegistrationOffset = function(){
 			var ty = this.endMatrix.y;
 			var mx = Math.abs(scaleX) < 1?  1/scaleX: 1;
 			var my = Math.abs(scaleY) < 1?  1/scaleY: 1;
-			this.endMatrix.scale(mx, my);
-
-			/*var signX = Math.sign(scaleX);
-			var signY = Math.sign(scaleY);
-			this.endMatrix.scale(signX, signY);*/
 
 			this.endMatrix.x = tx;
 			this.endMatrix.y = ty;
